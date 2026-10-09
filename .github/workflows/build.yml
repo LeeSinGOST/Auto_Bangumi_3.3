@@ -400,21 +400,5 @@ jobs:
               } >> $GITHUB_OUTPUT
             fi
           fi
-          
-      - name: Release
-        id: release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ needs.version-info.outputs.version }}
-          name: ${{ steps.release-info.outputs.version }}
-          body: ${{ steps.changelog.outputs.body }}
-          draft: false
-          prerelease: ${{ steps.release-info.outputs.pre_release == 'true' }}
-          files: |
-            webui/dist.zip
-            backend/app-v${{ needs.version-info.outputs.version }}.zip
-            update-bundle-${{ needs.version-info.outputs.version }}.zip
-            update-bundle-${{ needs.version-info.outputs.version }}.zip.sha256
-            update-bundle-${{ needs.version-info.outputs.version }}.zip.sig
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+

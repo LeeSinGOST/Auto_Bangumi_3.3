@@ -371,10 +371,10 @@ sig = key.sign(bundle.read_bytes())
 Path(str(bundle) + ".sig").write_text(base64.b64encode(sig).decode() + "\n")
 print(f"signed {bundle}")
 PY
-else
-: > "update-bundle-${VERSION}.zip.sig"
-echo "UPDATE_SIGNING_KEY is not configured; wrote empty placeholder .sig (scheme B for self-hosted forks)."
-fi
+          else
+            : > "update-bundle-${VERSION}.zip.sig"
+            echo "UPDATE_SIGNING_KEY is not configured; wrote empty placeholder .sig (scheme B for self-hosted forks)."
+          fi
 
       - name: Generate Release info
         id: release-info

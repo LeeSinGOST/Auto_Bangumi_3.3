@@ -83,6 +83,13 @@ DEFAULT_SETTINGS: dict[str, dict[str, Any]] = {
         "channel": "stable",
         "auto_check": True,
     },
+    "cloud_upload": {
+        "enable": False,
+        "webhook_url": "",
+        "auth_token": "",
+        "timeout": 30.0,
+        "include_file_paths": True,
+    },
 }
 
 
@@ -136,6 +143,12 @@ ENV_TO_ATTR: dict[str, dict[str, Any]] = {
             ("username", lambda e: e.split(",")[2]),
             ("password", lambda e: e.split(",")[3]),
         ],
+    },
+    "cloud_upload": {
+        "AB_CLOUD_UPLOAD": ("enable", lambda e: e.lower() in ("true", "1", "t")),
+        "AB_CLOUD_UPLOAD_URL": "webhook_url",
+        "AB_CLOUD_UPLOAD_TOKEN": "auth_token",
+        "AB_CLOUD_UPLOAD_TIMEOUT": ("timeout", lambda e: float(e)),
     },
 }
 

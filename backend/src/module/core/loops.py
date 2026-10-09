@@ -8,6 +8,7 @@ import asyncio
 import logging
 
 from module.conf import settings
+from module.cloud_upload import CloudUploadPayload, CloudUploader
 from module.database import Database
 from module.downloader import DownloadClient
 from module.manager import Renamer, TorrentManager, eps_complete
@@ -61,7 +62,12 @@ async def rss_tick(analyser: RSSAnalyser, notifier: NotificationManager) -> None
 
 
 async def rename_tick(notifier: NotificationManager) -> None:
-    """Rename completed downloads and notify via the shared notifier."""
+    """Rename completed downloads and notify via the shared notifier.
+
+    在通知发送完成后，若启用了云端上传 webhook，则向外部脚本回调
+    每一条重命名结果。外部脚本回调是「尽力而为」：任何异常都只记
+    WARNING 日志，绝不阻塞或破坏重命名 / 通知主流程。
+    """
     async with DownloadClient() as client:
         renamer = Renamer(client)
         renamed_info = await renamer.rename()
@@ -69,9 +75,21 @@ async def rename_tick(notifier: NotificationManager) -> None:
     if rename_events:
         await asyncio.gather(*[notifier.send_event(event) for event in rename_events])
     if settings.notification.enable and renamed_info:
-        # Gather across renamed items so a batch rename (e.g. first import of
-        # a season) doesn't serialize N notification round-trips.
         await asyncio.gather(*[notifier.send_all(info) for info in renamed_info])
+    if renamed_info:
+        uploader = CloudUploader()
+        if uploader.enabled:
+            download_root = settings.downloader.path
+            payloads = [
+                CloudUploadPayload.from_notification(
+                    info, download_root=download_root
+                )
+                for info in renamed_info
+            ]
+            try:
+                await uploader.upload_many(payloads)
+            except Exception as e:
+                logger.warning("Cloud upload dispatcher raised: %r", e)
 
 
 async def offset_scan_tick(notifier: NotificationManager) -> None:

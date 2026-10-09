@@ -409,6 +409,43 @@ class Update(BaseModel):
     auto_check: bool = Field(default=True, description="Auto-check for updates")
 
 
+class CloudUpload(BaseModel):
+    """番剧文件处理完成后，通过 HTTP POST 回调外部云端脚本。
+
+    外部脚本（如 Docker 部署的上传服务）在收到 POST 请求后负责
+    将已重命名的番剧文件上传到云端（阿里云盘、OneDrive 等）。
+    """
+
+    enable: bool = Field(default=False, description="Enable cloud upload webhook")
+    webhook_url_: str = Field(
+        default="",
+        alias="webhook_url",
+        description="External cloud script HTTP endpoint (POST)",
+    )
+    auth_token_: str = Field(
+        default="",
+        alias="auth_token",
+        description="Optional bearer token sent as Authorization header",
+    )
+    timeout: float = Field(
+        default=30.0,
+        ge=1.0,
+        description="HTTP request timeout in seconds",
+    )
+    include_file_paths: bool = Field(
+        default=True,
+        description="Include absolute file paths of renamed media in the payload",
+    )
+
+    @property
+    def webhook_url(self) -> str:
+        return _expand(self.webhook_url_)
+
+    @property
+    def auth_token(self) -> str:
+        return _expand(self.auth_token_)
+
+
 class Config(BaseModel):
     """Root configuration model composed of all subsection models."""
 
@@ -425,6 +462,7 @@ class Config(BaseModel):
     experimental_openai: ExperimentalOpenAI = ExperimentalOpenAI()
     security: Security = Security()
     update: Update = Update()
+    cloud_upload: CloudUpload = CloudUpload()
 
     def model_dump(self, *args, by_alias=True, **kwargs):
         return super().model_dump(*args, by_alias=by_alias, **kwargs)

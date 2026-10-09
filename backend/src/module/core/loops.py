@@ -7,8 +7,8 @@
 import asyncio
 import logging
 
+from module.cloud_upload import CloudUploader, CloudUploadPayload
 from module.conf import settings
-from module.cloud_upload import CloudUploadPayload, CloudUploader
 from module.database import Database
 from module.downloader import DownloadClient
 from module.manager import Renamer, TorrentManager, eps_complete

@@ -361,20 +361,20 @@ jobs:
           VERSION="${{ needs.version-info.outputs.version }}"
           if [ -n "$UPDATE_SIGNING_KEY" ]; then
             uv run --no-project --with cryptography python - "update-bundle-${VERSION}.zip" <<'PY'
-            import base64, os, sys
-            from pathlib import Path
-            from cryptography.hazmat.primitives.serialization import load_pem_private_key
+import base64, os, sys
+from pathlib import Path
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
-            bundle = Path(sys.argv[1])
-            key = load_pem_private_key(os.environ["UPDATE_SIGNING_KEY"].encode(), password=None)
-            sig = key.sign(bundle.read_bytes())
-            Path(str(bundle) + ".sig").write_text(base64.b64encode(sig).decode() + "\n")
-            print(f"signed {bundle}")
-            PY
-          else
-            : > "update-bundle-${VERSION}.zip.sig"
-            echo "UPDATE_SIGNING_KEY is not configured; wrote empty placeholder .sig (scheme B for self-hosted forks)."
-          fi
+bundle = Path(sys.argv[1])
+key = load_pem_private_key(os.environ["UPDATE_SIGNING_KEY"].encode(), password=None)
+sig = key.sign(bundle.read_bytes())
+Path(str(bundle) + ".sig").write_text(base64.b64encode(sig).decode() + "\n")
+print(f"signed {bundle}")
+PY
+else
+: > "update-bundle-${VERSION}.zip.sig"
+echo "UPDATE_SIGNING_KEY is not configured; wrote empty placeholder .sig (scheme B for self-hosted forks)."
+fi
 
       - name: Generate Release info
         id: release-info

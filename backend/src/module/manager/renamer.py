@@ -146,9 +146,11 @@ class Renamer:
                 return f"{base}.{file_info.language}{file_info.suffix}"
             return f"{base}{file_info.suffix}"
         elif method == "pn":
-            return f"{title} S{season}E{episode}_{file_info.group}{file_info.suffix}"
+            return f"{title} S{season}E{episode}{file_info.suffix}"
         elif method == "advance":
-            return f"{bangumi_name} S{season}E{episode}{file_info.suffix}"
+            group_part = f".{file_info.group}" if file_info.group else ""
+            return f"{bangumi_name} S{season}E{episode}{group_part}{file_info.suffix}"
+            # return f"{bangumi_name} S{season}E{episode}{file_info.suffix}"
         elif method == "normal":
             logger.warning("Normal rename method is deprecated.")
             return file_info.media_path
@@ -156,12 +158,14 @@ class Renamer:
             assert isinstance(
                 file_info, SubtitleFile
             ), "subtitle_pn requires a SubtitleFile"
-            return f"{title} S{season}E{episode}_{file_info.group}.{file_info.language}{file_info.suffix}"
+            return f"{title} S{season}E{episode}.{file_info.language}{file_info.suffix}"
         elif method == "subtitle_advance":
             assert isinstance(
                 file_info, SubtitleFile
             ), "subtitle_advance requires a SubtitleFile"
-            return f"{bangumi_name} S{season}E{episode}.{file_info.language}{file_info.suffix}"
+            group_part = f".{file_info.group}" if file_info.group else ""
+            return f"{bangumi_name} S{season}E{episode}{group_part}.{file_info.language}{file_info.suffix}"
+            # return f"{bangumi_name} S{season}E{episode}.{file_info.language}{file_info.suffix}"
         else:
             logger.error(f"Unknown rename method: {method}")
             return file_info.media_path

@@ -1,4 +1,20 @@
-<p align="center">
+## 基于AB 3.3根据自己需求改
+- ~~推送，改server-chan为自定义qqbot，对应token为url，chat_id为发送对象。~~ 3.3已支持webhook通知
+- advance重命名时加入字幕组.{{group}} "Bangumi Name S01E05.SubGroup.mkv"
+- 每次完成重命名之后携带种子文件信息使用http post回调,用于个人外部脚本自动化调用【上传网盘并生成strm】。cloud_upload
+  配置信息：在config.json配置项：
+      "cloud_upload": {
+        "enable": true,
+        "webhook_url": "http://172.17.0.1:8787/upload", 
+        "auth_token": "my-secret-token", 
+        "timeout": 15.0,
+        "include_file_paths": true
+    }
+- 删除arm v7平台，推送个人dockerhub。"kokutou/auto_bangumi:latest"
+
+## 以下为原文档
+https://github.com/EstrellaXD/Auto_Bangumi
+==================================================================================================<p align="center">
     <img src="docs/public/image/icons/light-icon.svg#gh-light-mode-only" width=50%/ alt="">
     <img src="docs/public/image/icons/dark-icon.svg#gh-dark-mode-only" width=50%/ alt="">
 </p>

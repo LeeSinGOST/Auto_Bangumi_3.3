@@ -146,7 +146,7 @@ class Renamer:
                 return f"{base}.{file_info.language}{file_info.suffix}"
             return f"{base}{file_info.suffix}"
         elif method == "pn":
-            return f"{title} S{season}E{episode}{file_info.suffix}"
+            return f"{title} S{season}E{episode}_{file_info.group}{file_info.suffix}"
         elif method == "advance":
             return f"{bangumi_name} S{season}E{episode}{file_info.suffix}"
         elif method == "normal":
@@ -156,7 +156,7 @@ class Renamer:
             assert isinstance(
                 file_info, SubtitleFile
             ), "subtitle_pn requires a SubtitleFile"
-            return f"{title} S{season}E{episode}.{file_info.language}{file_info.suffix}"
+            return f"{title} S{season}E{episode}_{file_info.group}.{file_info.language}{file_info.suffix}"
         elif method == "subtitle_advance":
             assert isinstance(
                 file_info, SubtitleFile
